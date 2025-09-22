@@ -1,23 +1,42 @@
+import { PrismaService } from 'src/prisma/prisma.service';
 import { IUserRepository } from '../interfaces/IUser.repository';
+import { User } from '@prisma/client';
 
 export class UserRepository implements IUserRepository {
-    create(name: string, password: string): Promise<void> {
-        throw new Error('Method not implemented.');
+    constructor(private prisma: PrismaService) { }
+
+    async create(name: string, password: string): Promise<User | null> {
+        return this.prisma.user.create({
+            data: {
+                name,
+                password,
+            },
+        });
     }
 
-    findAll(): Promise<any[]> {
-        throw new Error('Method not implemented.');
+    findAll(): Promise<User[]> {
+        return this.prisma.user.findMany();
     }
 
-    findOne(id: number): Promise<any> {
-        throw new Error('Method not implemented.');
+    findOne(id: string): Promise<User | null> {
+        return this.prisma.user.findUnique({
+            where: { id },
+        });
     }
 
-    update(id: number, name: string, password: string): Promise<void> {
-        throw new Error('Method not implemented.');
+    update(id: string, name: string, password: string): Promise<User | null> {
+        return this.prisma.user.update({
+            where: { id },
+            data: {
+                name,
+                password,
+            },
+        });
     }
 
-    remove(id: number): Promise<void> {
-        throw new Error('Method not implemented.');
+    async remove(id: string): Promise<void> {
+        await this.prisma.user.delete({
+            where: { id },
+        });
     }
 }
